@@ -29,19 +29,16 @@ class _CalendarScreenState extends State<CalendarScreen> {
 
   void getAllNote() async {
     try {
-      setState(() {
-        _isLoading = true;
-      });
+      _isLoading = true;
+      calendarBloc.sinkIsLoading.add(_isLoading);
       event = await calendarBloc.getAllNotes(
           context, _focusedDay.month, _focusedDay.year);
       calendarBloc.sinkEvents.add(event);
-      setState(() {
-        _isLoading = false;
-      });
+      _isLoading = false;
+      calendarBloc.sinkIsLoading.add(_isLoading);
     } catch (e) {
-      setState(() {
-        _isLoading = false;
-      });
+      _isLoading = false;
+      calendarBloc.sinkIsLoading.add(_isLoading);
       // print('Lỗi khi tải sự kiện: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Không thể tải dữ liệu sự kiện')),
@@ -254,326 +251,344 @@ class _CalendarScreenState extends State<CalendarScreen> {
           ),
         ],
       ),
-      body: StreamBuilder<EventModel?>(
-        stream: calendarBloc.streamEvents,
-        initialData: event,
-        builder: (context, eventsSnapshot) {
-          if (_isLoading || eventsSnapshot.data == null) {
-            calendarBloc.getAllNotes(
-                context, _focusedDay.month, _focusedDay.year);
-            return Center(child: CircularProgressIndicator());
-          } else {
-            return SafeArea(
-              child: Column(
-                children: [
-                  TableCalendar<Events>(
-                    calendarBuilders: CalendarBuilders(
-                      defaultBuilder: (context, date, _) {
-                        return Container(
-                          margin: const EdgeInsets.all(4.0),
-                          decoration: BoxDecoration(
-                            shape: BoxShape.rectangle,
-                            borderRadius: BorderRadius.circular(5),
-                          ),
-                          child: Stack(
-                            children: [
-                              Positioned(
-                                left: 5.0,
-                                child: Text(
-                                  '${date.day}',
-                                  style: TextStyle(fontSize: 16),
-                                ),
-                              ),
-                            ],
-                          ),
-                        );
-                      },
-                      todayBuilder: (context, date, _) {
-                        return Container(
-                          margin: const EdgeInsets.all(4.0),
-                          decoration: BoxDecoration(
-                            color: Colors.purpleAccent,
-                            shape: BoxShape.rectangle,
-                            borderRadius: BorderRadius.circular(5),
-                          ),
-                          child: Stack(
-                            children: [
-                              Positioned(
-                                left: 5.0,
-                                child: Text(
-                                  '${date.day}',
-                                  style: TextStyle(
-                                      fontSize: 16, color: Colors.white),
-                                ),
-                              ),
-                            ],
-                          ),
-                        );
-                      },
-                      selectedBuilder: (context, date, _) {
-                        return Container(
-                          margin: const EdgeInsets.all(4.0),
-                          decoration: BoxDecoration(
-                            color: Colors.blue,
-                            shape: BoxShape.rectangle,
-                            borderRadius: BorderRadius.circular(5),
-                          ),
-                          child: Stack(
-                            children: [
-                              Positioned(
-                                left: 5.0,
-                                child: Text(
-                                  '${date.day}',
-                                  style: TextStyle(
-                                      fontSize: 16, color: Colors.white),
-                                ),
-                              ),
-                            ],
-                          ),
-                        );
-                      },
-                      markerBuilder: (context, date, events) {
-                        if (events.isNotEmpty) {
-                          return Positioned(
-                            left: 5.0,
-                            child: Container(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 2.0),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(4.0),
-                              ),
-                              child: Column(
-                                children: [
-                                  getMoneyIncomeOnDay(events) != "0"
-                                      ? Text(
-                                          truncateText(
-                                              getMoneyIncomeOnDay(events), 9),
-                                          style: TextStyle(
-                                              fontSize: 12, color: Colors.blue),
-                                        )
-                                      : SizedBox.shrink(),
-                                  Text(
-                                    truncateText(getMoneySpentOnDay(events), 9),
-                                    style: TextStyle(
-                                        fontSize: 12, color: Colors.redAccent),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          );
-                        }
-                        return null;
-                      },
-                    ),
-                    locale: "vi_VN",
-                    firstDay: DateTime.utc(2010, 10, 16),
-                    lastDay: DateTime.utc(2030, 3, 14),
-                    focusedDay: _focusedDay,
-                    calendarFormat: _calendarFormat,
-                    eventLoader: (day) =>
-                        _getEventFromDay(day, eventsSnapshot.data),
-                    headerVisible: true,
-                    headerStyle: HeaderStyle(
-                      titleCentered: true,
-                      titleTextStyle: TextStyle(fontSize: 25),
-                    ),
-                    calendarStyle: CalendarStyle(
-                      outsideDecoration: BoxDecoration(
-                        shape: BoxShape.rectangle,
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                      weekendDecoration: BoxDecoration(
-                        shape: BoxShape.rectangle,
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                      todayDecoration: BoxDecoration(
-                        color: Colors.purpleAccent,
-                        shape: BoxShape.rectangle,
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                      selectedDecoration: BoxDecoration(
-                        color: Colors.blue,
-                        shape: BoxShape.rectangle,
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                      defaultDecoration: BoxDecoration(
-                        shape: BoxShape.rectangle,
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                    ),
-                    daysOfWeekVisible: true,
-                    pageJumpingEnabled: true,
-                    sixWeekMonthsEnforced: false,
-                    weekNumbersVisible: false,
-                    rowHeight: 60,
-                    daysOfWeekHeight: 20,
-                    startingDayOfWeek: StartingDayOfWeek.monday,
-                    dayHitTestBehavior: HitTestBehavior.opaque,
-                    availableGestures: AvailableGestures.all,
-                    availableCalendarFormats: {CalendarFormat.month: "Month"},
-                    selectedDayPredicate: (day) {
-                      return isSameDay(selectedDay, day);
-                    },
-                    onDaySelected: (DateTime selected, DateTime focused) {
-                      setState(() {
-                        selectedDay = selected;
-                        _focusedDay = focused;
-                        _scrollToDay(selected);
-                      });
-                    },
-                    onFormatChanged: (format) {
-                      if (_calendarFormat != format) {
-                        setState(() {
-                          _calendarFormat = format;
-                        });
-                      }
-                    },
-                    onPageChanged: (focusedDay) {
-                      _focusedDay = focusedDay;
-                      getAllNote();
-                    },
-                  ),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 16.0, vertical: 8.0),
-                    color: Colors.grey[200],
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      body: StreamBuilder<bool>(
+          stream: calendarBloc.streamIsLoading,
+          initialData: _isLoading,
+          builder: (context, isLoadingSnapshot) {
+            return StreamBuilder<EventModel?>(
+              stream: calendarBloc.streamEvents,
+              initialData: event,
+              builder: (context, eventsSnapshot) {
+                if (isLoadingSnapshot.data == true ||
+                    eventsSnapshot.data == null) {
+                  getAllNote();
+                  return Center(child: CircularProgressIndicator());
+                } else {
+                  return SafeArea(
+                    child: Column(
                       children: [
-                        Column(
-                          children: [
-                            Text("Thu nhập"),
-                            Text(
-                              "${formatMoney(getMonthlyIncomeTotal(eventsSnapshot.data))} ₫",
-                              style: TextStyle(
-                                  color: Colors.blue,
-                                  fontWeight: FontWeight.bold),
-                            )
-                          ],
-                        ),
-                        Column(
-                          children: [
-                            Text("Chi tiêu"),
-                            Text(
-                              "${formatMoney(getMonthlySpentTotal(eventsSnapshot.data))} ₫",
-                              style: TextStyle(
-                                  color: Colors.redAccent,
-                                  fontWeight: FontWeight.bold),
-                            )
-                          ],
-                        ),
-                        Column(
-                          children: [
-                            Text("Tổng"),
-                            Text(
-                              "${formatMoney(getMonthlyIncomeTotal(eventsSnapshot.data) - getMonthlySpentTotal(eventsSnapshot.data))}₫",
-                              style: TextStyle(
-                                color:
-                                    getMonthlyIncomeTotal(eventsSnapshot.data) >
-                                            getMonthlySpentTotal(
-                                                eventsSnapshot.data)
-                                        ? Colors.blue
-                                        : Colors.redAccent,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            )
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(height: context.lowValue),
-                  Expanded(
-                    child: ListView(
-                      controller: _scrollController,
-                      children: [
-                        ..._selectedEvents(eventsSnapshot.data)
-                            .entries
-                            .where((entry) =>
-                                entry.key.year == _focusedDay.year &&
-                                entry.key.month == _focusedDay.month)
-                            .map(
-                          (entry) {
-                            final key = GlobalKey();
-                            _dayKeys[entry.key] = key;
-                            return Column(
-                              key: key,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Container(
-                                  color: Colors.grey[300],
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 16.0, vertical: 8.0),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(
-                                        '${entry.key.day}/${entry.key.month}/${entry.key.year} ',
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold,
-                                        ),
+                        TableCalendar<Events>(
+                          calendarBuilders: CalendarBuilders(
+                            defaultBuilder: (context, date, _) {
+                              return Container(
+                                margin: const EdgeInsets.all(4.0),
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.rectangle,
+                                  borderRadius: BorderRadius.circular(5),
+                                ),
+                                child: Stack(
+                                  children: [
+                                    Positioned(
+                                      left: 5.0,
+                                      child: Text(
+                                        '${date.day}',
+                                        style: TextStyle(fontSize: 16),
                                       ),
-                                      Text(
-                                        '${getMoneyOnDayNotFormat(entry.value)}₫',
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold),
-                                      )
-                                    ],
-                                  ),
+                                    ),
+                                  ],
                                 ),
-                                ...entry.value.map(
-                                  (event) => ListTile(
-                                    onTap: () {
-                                      eventChanged(context, event, calendarBloc,
-                                          toastService, _focusedDay);
-                                    },
-                                    title: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
+                              );
+                            },
+                            todayBuilder: (context, date, _) {
+                              return Container(
+                                margin: const EdgeInsets.all(4.0),
+                                decoration: BoxDecoration(
+                                  color: Colors.grey[300],
+                                  shape: BoxShape.rectangle,
+                                  borderRadius: BorderRadius.circular(5),
+                                ),
+                                child: Stack(
+                                  children: [
+                                    Positioned(
+                                      left: 5.0,
+                                      child: Text(
+                                        '${date.day}',
+                                        style: TextStyle(
+                                            fontSize: 16, color: Colors.white),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
+                            selectedBuilder: (context, date, _) {
+                              return Container(
+                                margin: const EdgeInsets.all(4.0),
+                                decoration: BoxDecoration(
+                                  color: Colors.blue[200],
+                                  shape: BoxShape.rectangle,
+                                  borderRadius: BorderRadius.circular(5),
+                                ),
+                                child: Stack(
+                                  children: [
+                                    Positioned(
+                                      left: 5.0,
+                                      child: Text(
+                                        '${date.day}',
+                                        style: TextStyle(
+                                            fontSize: 16, color: Colors.white),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
+                            markerBuilder: (context, date, events) {
+                              if (events.isNotEmpty) {
+                                return Positioned(
+                                  left: 5.0,
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 2.0),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(4.0),
+                                    ),
+                                    child: Column(
                                       children: [
+                                        getMoneyIncomeOnDay(events) != "0"
+                                            ? Text(
+                                                truncateText(
+                                                    getMoneyIncomeOnDay(events),
+                                                    9),
+                                                style: TextStyle(
+                                                    fontSize: 12,
+                                                    color: Colors.blue),
+                                              )
+                                            : SizedBox.shrink(),
                                         Text(
-                                          "${event.labelName!} (${event.name})",
+                                          truncateText(
+                                              getMoneySpentOnDay(events), 9),
                                           style: TextStyle(
-                                              fontWeight: FontWeight.w500),
+                                              fontSize: 12,
+                                              color: Colors.redAccent),
                                         ),
-                                        Text(
-                                          "${formatMoney(event.money!.toInt())}₫",
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: event.isIncome!
-                                                ? Colors.blue
-                                                : Colors.black,
-                                          ),
-                                        )
                                       ],
                                     ),
-                                    leading: Image.asset(
-                                      IconConstants.instance
-                                          .getIcon(event.icon!),
-                                      width: 25,
-                                      height: 25,
-                                      color: Color(
-                                        int.parse(event.color!),
-                                      ),
-                                    ),
-                                    trailing: Icon(Icons.arrow_forward_ios),
                                   ),
-                                ),
-                              ],
-                            );
+                                );
+                              }
+                              return null;
+                            },
+                          ),
+                          locale: "vi_VN",
+                          firstDay: DateTime.utc(2010, 10, 16),
+                          lastDay: DateTime.utc(2030, 3, 14),
+                          focusedDay: _focusedDay,
+                          calendarFormat: _calendarFormat,
+                          eventLoader: (day) =>
+                              _getEventFromDay(day, eventsSnapshot.data),
+                          headerVisible: true,
+                          headerStyle: HeaderStyle(
+                            titleCentered: true,
+                            titleTextStyle: TextStyle(fontSize: 25),
+                          ),
+                          calendarStyle: CalendarStyle(
+                            outsideDecoration: BoxDecoration(
+                              shape: BoxShape.rectangle,
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                            weekendDecoration: BoxDecoration(
+                              shape: BoxShape.rectangle,
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                            todayDecoration: BoxDecoration(
+                              color: Colors.purpleAccent,
+                              shape: BoxShape.rectangle,
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                            selectedDecoration: BoxDecoration(
+                              color: Colors.blue,
+                              shape: BoxShape.rectangle,
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                            defaultDecoration: BoxDecoration(
+                              shape: BoxShape.rectangle,
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                          ),
+                          daysOfWeekVisible: true,
+                          pageJumpingEnabled: true,
+                          sixWeekMonthsEnforced: false,
+                          weekNumbersVisible: false,
+                          rowHeight: 60,
+                          daysOfWeekHeight: 20,
+                          startingDayOfWeek: StartingDayOfWeek.monday,
+                          dayHitTestBehavior: HitTestBehavior.opaque,
+                          availableGestures: AvailableGestures.all,
+                          availableCalendarFormats: {
+                            CalendarFormat.month: "Month"
                           },
+                          selectedDayPredicate: (day) {
+                            return isSameDay(selectedDay, day);
+                          },
+                          onDaySelected: (DateTime selected, DateTime focused) {
+                            setState(() {
+                              selectedDay = selected;
+                              _focusedDay = focused;
+                              _scrollToDay(selected);
+                            });
+                          },
+                          onFormatChanged: (format) {
+                            if (_calendarFormat != format) {
+                              setState(() {
+                                _calendarFormat = format;
+                              });
+                            }
+                          },
+                          onPageChanged: (focusedDay) {
+                            _focusedDay = focusedDay;
+                            getAllNote();
+                          },
+                        ),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16.0, vertical: 8.0),
+                          color: Colors.grey[200],
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Column(
+                                children: [
+                                  Text("Thu nhập"),
+                                  Text(
+                                    "${formatMoney(getMonthlyIncomeTotal(eventsSnapshot.data))} ₫",
+                                    style: TextStyle(
+                                        color: Colors.blue,
+                                        fontWeight: FontWeight.bold),
+                                  )
+                                ],
+                              ),
+                              Column(
+                                children: [
+                                  Text("Chi tiêu"),
+                                  Text(
+                                    "${formatMoney(getMonthlySpentTotal(eventsSnapshot.data))} ₫",
+                                    style: TextStyle(
+                                        color: Colors.redAccent,
+                                        fontWeight: FontWeight.bold),
+                                  )
+                                ],
+                              ),
+                              Column(
+                                children: [
+                                  Text("Tổng"),
+                                  Text(
+                                    "${formatMoney(getMonthlyIncomeTotal(eventsSnapshot.data) - getMonthlySpentTotal(eventsSnapshot.data))}₫",
+                                    style: TextStyle(
+                                      color: getMonthlyIncomeTotal(
+                                                  eventsSnapshot.data) >
+                                              getMonthlySpentTotal(
+                                                  eventsSnapshot.data)
+                                          ? Colors.blue
+                                          : Colors.redAccent,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(height: context.lowValue),
+                        Expanded(
+                          child: ListView(
+                            controller: _scrollController,
+                            children: [
+                              ..._selectedEvents(eventsSnapshot.data)
+                                  .entries
+                                  .where((entry) =>
+                                      entry.key.year == _focusedDay.year &&
+                                      entry.key.month == _focusedDay.month)
+                                  .map(
+                                (entry) {
+                                  final key = GlobalKey();
+                                  _dayKeys[entry.key] = key;
+                                  return Column(
+                                    key: key,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Container(
+                                        color: Colors.grey[300],
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 16.0, vertical: 8.0),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              '${entry.key.day}/${entry.key.month}/${entry.key.year} ',
+                                              style: TextStyle(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                            Text(
+                                              '${getMoneyOnDayNotFormat(entry.value)}₫',
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.bold),
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                      ...entry.value.map(
+                                        (event) => ListTile(
+                                          onTap: () {
+                                            eventChanged(
+                                                context,
+                                                event,
+                                                calendarBloc,
+                                                toastService,
+                                                _focusedDay);
+                                          },
+                                          title: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Text(
+                                                "${event.labelName!} (${event.name})",
+                                                style: TextStyle(
+                                                    fontWeight:
+                                                        FontWeight.w500),
+                                              ),
+                                              Text(
+                                                "${formatMoney(event.money!.toInt())}₫",
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  color: event.isIncome!
+                                                      ? Colors.blue
+                                                      : Colors.black,
+                                                ),
+                                              )
+                                            ],
+                                          ),
+                                          leading: Image.asset(
+                                            IconConstants.instance
+                                                .getIcon(event.icon!),
+                                            width: 25,
+                                            height: 25,
+                                            color: Color(
+                                              int.parse(event.color!),
+                                            ),
+                                          ),
+                                          trailing:
+                                              Icon(Icons.arrow_forward_ios),
+                                        ),
+                                      ),
+                                    ],
+                                  );
+                                },
+                              ),
+                            ],
+                          ),
                         ),
                       ],
                     ),
-                  ),
-                ],
-              ),
+                  );
+                }
+              },
             );
-          }
-        },
-      ),
+          }),
     );
   }
 }

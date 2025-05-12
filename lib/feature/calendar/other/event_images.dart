@@ -27,7 +27,7 @@ Future<bool> eventImage(BuildContext context, String url) async {
           );
         },
       ) ??
-      false; // nếu người dùng không chọn gì => false
+      false; 
 
   return isDeleteImage;
 }

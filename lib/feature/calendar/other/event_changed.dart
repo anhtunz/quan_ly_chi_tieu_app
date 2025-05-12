@@ -83,6 +83,7 @@ eventChanged(BuildContext context, Events event, CalendarBloc calendarBloc,
                           date,
                           event.isIncome!,
                           event.images ?? []);
+
                       Navigator.pop(modalBottomSheetContext);
                       calendarBloc.sinkEvents.add(null);
                     },

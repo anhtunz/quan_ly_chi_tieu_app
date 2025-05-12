@@ -25,6 +25,10 @@ class CalendarBloc extends BlocBase {
   StreamSink<Events> get sinkEvent => event.sink;
   Stream<Events> get streamEvent => event.stream;
 
+  final isLoading = StreamController<bool>.broadcast();
+  StreamSink<bool> get sinkIsLoading => isLoading.sink;
+  Stream<bool> get streamIsLoading => isLoading.stream;
+
   final allLabels = StreamController<Map<String, List<LabelModel>>>.broadcast();
   StreamSink<Map<String, List<LabelModel>>> get sinkAllLabels => allLabels.sink;
   Stream<Map<String, List<LabelModel>>> get streamAllLabels => allLabels.stream;
@@ -104,7 +108,9 @@ class CalendarBloc extends BlocBase {
       "money": money,
       "description": description,
       "dateUse": date,
-      "images": images
+      "images": [
+        {"id": images[0].id, "url": images[0].imageUrl}
+      ]
     };
     final statusCode = await apiServices.createOrUpdateSpendingNote(body);
     if (statusCode == 200) {
