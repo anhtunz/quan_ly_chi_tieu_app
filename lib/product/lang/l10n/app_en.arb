@@ -1,0 +1,31 @@
+{
+  "home_page_name": "Home Page",
+  "vietnam_language": "Vietnamese",
+  "english_language": "English",
+  "not_use_1": "Đây là bộ tiếng sử dụng trong Welcome, Login và Register",
+  "welcome_title":"Welcome",
+  "register_title": "Sign Up",
+  "register_body": "Create an account. It's free",
+  "login_title": "Login",
+  "login_body": "Login to your account",
+  "login_do_not_have_account":"Don't have an account? ",
+  "name_label": "Full Name",
+  "name_hint":"Enter your name",
+  "name_not_empty": "Name cannot be empty",
+  "email_label": "Email",
+  "email_hint":"Press your email",
+  "email_error":"Invalid Email",
+  "email_not_empty": "Email cannot be empty",
+  "password_label":"Password",
+  "password_hint":"Enter Password",
+  "password_not_empty": "Password cannot be empty",
+  "password_not_length": "Password must be at least 6 characters",
+  "password_not_match": "Password do not match",
+  "password_confirm_label":"Confirm Password",
+  "register_button_title": "Sign Up",
+  "register_success":"Register successfully",
+  "login_success":"Login successfully",
+  
+  "notification_message":"Notification"
+
+}

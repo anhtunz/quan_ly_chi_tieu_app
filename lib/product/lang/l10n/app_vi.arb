@@ -1,0 +1,31 @@
+{
+  "home_page_name": "Trang chủ",
+  "vietnam_language": "Tiếng Việt",
+  "english_language": "Tiếng Anh",
+  "not_use_1": "Đây là bộ tiếng sử dụng trong Welcome, Login và Register",
+  "welcome_title":"Chào mừng",
+  "register_title": "Đăng ký",
+  "login_title": "Đăng nhập",
+  "register_body": "Tạo một tài khoản và tận hưởng nào!",
+  "login_body": "Đăng nhập vào tài khoản của bạn",
+  "login_do_not_have_account":"Chưa có tài khoản? ",
+  "name_label": "Tên người dùng",
+  "name_hint":"Nhập tên",
+  "name_not_empty": "Tên không được để trống",
+  "email_label": "Email",
+  "email_hint":"Nhập email",
+  "email_error":"Email không hợp lệ",
+  "email_not_empty": "Email không được để trống",
+  "password_label":"Mật khẩu",
+  "password_hint":"Nhập mật khẩu",
+  "password_not_empty": "Mật khẩu không được để trống",
+  "password_not_length": "Mật khẩu phải có ít nhất 6 ký tự",
+  "password_not_match": "Mật khẩu không khớp",
+  "password_confirm_label":"Xác nhận mật khẩu",
+  "register_button_title": "Đăng ký",
+  "register_success":"Đăng ký thành công",
+  "login_success":"Đăng nhập thành công",
+
+  "notification_message":"Thông báo"
+
+}
