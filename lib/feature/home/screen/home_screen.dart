@@ -560,6 +560,75 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
+String convertToIso8601(String input) {
+  // Định dạng chuỗi đầu vào: "25/04/2025 (Thứ Sáu)"
+  final dateFormat = DateFormat("dd/MM/yyyy '('EEEE')'", 'vi_VN');
+
+  try {
+    // Phân tích chuỗi thành DateTime
+    DateTime dateTime = dateFormat.parse(input);
+
+    // Chuyển thành định dạng ISO 8601
+    // Vì không có thông tin giờ, đặt mặc định là 00:00:00 UTC
+    DateTime utcDateTime = DateTime.utc(
+      dateTime.year,
+      dateTime.month,
+      dateTime.day,
+      0, // Giờ
+      0, // Phút
+      0, // Giây
+    );
+
+    // Trả về chuỗi ISO 8601
+    return utcDateTime.toIso8601String();
+  } catch (e) {
+    return 'Lỗi: Không thể phân tích chuỗi ngày giờ';
+  }
+}
+
+String formatMoney(String money) {
+  int moneyParse = int.parse(money);
+  String formattedMoney = moneyParse.abs().toString();
+
+  // Không cần format nếu dưới 4 chữ số
+  if (formattedMoney.length < 4) {
+    return formattedMoney;
+  }
+
+  String result = '';
+  for (int i = formattedMoney.length - 1, count = 0; i >= 0; i--) {
+    result = formattedMoney[i] + result;
+    count++;
+    if (count % 3 == 0 && i > 0) {
+      result = '.$result';
+    }
+  }
+
+  return result;
+}
+Future<String> extractFile(File file) async {
+  final textRecornized = TextRecognizer(script: TextRecognitionScript.latin);
+  final InputImage inputImage = InputImage.fromFile(file);
+  final RecognizedText recognizedText =
+      await textRecornized.processImage(inputImage);
+  // setState(() {});
+  String text = recognizedText.text;
+  log("Text: $text");
+  return extractAmountFromText(text) ?? "0";
+}
+
+String? extractAmountFromText(String text) {
+  final regex = RegExp(r'(\d{1,3}(?:,\d{3})*)\s*VND');
+  final match = regex.firstMatch(text);
+
+  if (match != null) {
+    String amountStr = match.group(1)!.replaceAll(',', '');
+    return amountStr;
+  }
+
+  return null;
+}
+
 class NumberFormatter extends TextInputFormatter {
   @override
   TextEditingValue formatEditUpdate(

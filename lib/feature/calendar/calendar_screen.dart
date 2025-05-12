@@ -24,8 +24,8 @@ class _CalendarScreenState extends State<CalendarScreen> {
   final ScrollController _scrollController = ScrollController();
   final Map<DateTime, GlobalKey> _dayKeys = {};
   DateTime _focusedDay = DateTime.now();
-  EventModel event = EventModel();
   bool _isLoading = false;
+  EventModel event = EventModel();
 
   void getAllNote() async {
     try {
@@ -42,15 +42,19 @@ class _CalendarScreenState extends State<CalendarScreen> {
       setState(() {
         _isLoading = false;
       });
+      // print('Lỗi khi tải sự kiện: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Không thể tải dữ liệu sự kiện')),
+      );
     }
   }
 
-  Map<DateTime, List<Events>> get _selectedEvents {
+  Map<DateTime, List<Events>> _selectedEvents(EventModel? eventModel) {
     Map<DateTime, List<Events>> eventsMap = {};
-    if (event.events == null) {
+    if (eventModel == null || eventModel.events == null) {
       return {};
-    } 
-    for (var event in event.events!) {
+    }
+    for (var event in eventModel.events!) {
       DateTime day =
           DateTime(event.inDate!.year, event.inDate!.month, event.inDate!.day);
       if (eventsMap[day] == null) {
@@ -61,8 +65,10 @@ class _CalendarScreenState extends State<CalendarScreen> {
     return eventsMap;
   }
 
-  List<Events> _getEventFromDay(DateTime day) {
-    return _selectedEvents[DateTime(day.year, day.month, day.day)] ?? [];
+  List<Events> _getEventFromDay(DateTime day, EventModel? eventModel) {
+    return _selectedEvents(
+            eventModel)[DateTime(day.year, day.month, day.day)] ??
+        [];
   }
 
   void _scrollToDay(DateTime day) {
@@ -79,9 +85,10 @@ class _CalendarScreenState extends State<CalendarScreen> {
     }
   }
 
-  String getMonthlyTotal() {
+  String getMonthlyTotal(EventModel? eventModel) {
     double total = 0;
-    final eventsInMonth = _selectedEvents.entries
+    final eventsInMonth = _selectedEvents(eventModel)
+        .entries
         .where((entry) =>
             entry.key.year == _focusedDay.year &&
             entry.key.month == _focusedDay.month)
@@ -93,9 +100,10 @@ class _CalendarScreenState extends State<CalendarScreen> {
     return getMoneyOnDay(eventsInMonth);
   }
 
-  int getMonthlyIncomeTotal() {
+  int getMonthlyIncomeTotal(EventModel? eventModel) {
     int incomeTotal = 0;
-    final eventsInMonth = _selectedEvents.entries
+    final eventsInMonth = _selectedEvents(eventModel)
+        .entries
         .where((entry) =>
             entry.key.year == _focusedDay.year &&
             entry.key.month == _focusedDay.month)
@@ -109,9 +117,10 @@ class _CalendarScreenState extends State<CalendarScreen> {
     return incomeTotal;
   }
 
-  int getMonthlySpentTotal() {
+  int getMonthlySpentTotal(EventModel? eventModel) {
     int spentTotal = 0;
-    final eventsInMonth = _selectedEvents.entries
+    final eventsInMonth = _selectedEvents(eventModel)
+        .entries
         .where((entry) =>
             entry.key.year == _focusedDay.year &&
             entry.key.month == _focusedDay.month)
@@ -223,6 +232,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
     super.initState();
     calendarBloc = BlocProvider.of(context);
     getAllNote();
+    // Future.delayed(Duration(seconds: 10), () => {getAllNote()});
   }
 
   @override
@@ -244,11 +254,13 @@ class _CalendarScreenState extends State<CalendarScreen> {
           ),
         ],
       ),
-      body: StreamBuilder<EventModel>(
+      body: StreamBuilder<EventModel?>(
         stream: calendarBloc.streamEvents,
         initialData: event,
         builder: (context, eventsSnapshot) {
           if (_isLoading || eventsSnapshot.data == null) {
+            calendarBloc.getAllNotes(
+                context, _focusedDay.month, _focusedDay.year);
             return Center(child: CircularProgressIndicator());
           } else {
             return SafeArea(
@@ -358,7 +370,8 @@ class _CalendarScreenState extends State<CalendarScreen> {
                     lastDay: DateTime.utc(2030, 3, 14),
                     focusedDay: _focusedDay,
                     calendarFormat: _calendarFormat,
-                    eventLoader: _getEventFromDay,
+                    eventLoader: (day) =>
+                        _getEventFromDay(day, eventsSnapshot.data),
                     headerVisible: true,
                     headerStyle: HeaderStyle(
                       titleCentered: true,
@@ -431,7 +444,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                           children: [
                             Text("Thu nhập"),
                             Text(
-                              "${formatMoney(getMonthlyIncomeTotal())} ₫",
+                              "${formatMoney(getMonthlyIncomeTotal(eventsSnapshot.data))} ₫",
                               style: TextStyle(
                                   color: Colors.blue,
                                   fontWeight: FontWeight.bold),
@@ -442,7 +455,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                           children: [
                             Text("Chi tiêu"),
                             Text(
-                              "${formatMoney(getMonthlySpentTotal())} ₫",
+                              "${formatMoney(getMonthlySpentTotal(eventsSnapshot.data))} ₫",
                               style: TextStyle(
                                   color: Colors.redAccent,
                                   fontWeight: FontWeight.bold),
@@ -453,12 +466,14 @@ class _CalendarScreenState extends State<CalendarScreen> {
                           children: [
                             Text("Tổng"),
                             Text(
-                              "${formatMoney(getMonthlyIncomeTotal() - getMonthlySpentTotal())}₫",
+                              "${formatMoney(getMonthlyIncomeTotal(eventsSnapshot.data) - getMonthlySpentTotal(eventsSnapshot.data))}₫",
                               style: TextStyle(
-                                color: getMonthlyIncomeTotal() >
-                                        getMonthlySpentTotal()
-                                    ? Colors.blue
-                                    : Colors.redAccent,
+                                color:
+                                    getMonthlyIncomeTotal(eventsSnapshot.data) >
+                                            getMonthlySpentTotal(
+                                                eventsSnapshot.data)
+                                        ? Colors.blue
+                                        : Colors.redAccent,
                                 fontWeight: FontWeight.bold,
                               ),
                             )
@@ -472,7 +487,8 @@ class _CalendarScreenState extends State<CalendarScreen> {
                     child: ListView(
                       controller: _scrollController,
                       children: [
-                        ..._selectedEvents.entries
+                        ..._selectedEvents(eventsSnapshot.data)
+                            .entries
                             .where((entry) =>
                                 entry.key.year == _focusedDay.year &&
                                 entry.key.month == _focusedDay.month)

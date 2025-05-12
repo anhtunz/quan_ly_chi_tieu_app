@@ -2,6 +2,7 @@
 
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:quan_ly_chi_tieu/feature/calendar/model/event_model.dart';
@@ -16,9 +17,13 @@ class CalendarBloc extends BlocBase {
   APIServices apiServices = APIServices();
   ToastService toastService = ToastService();
 
-  final events = StreamController<EventModel>.broadcast();
-  StreamSink<EventModel> get sinkEvents => events.sink;
-  Stream<EventModel> get streamEvents => events.stream;
+  final events = StreamController<EventModel?>.broadcast();
+  StreamSink<EventModel?> get sinkEvents => events.sink;
+  Stream<EventModel?> get streamEvents => events.stream;
+
+  final event = StreamController<Events>.broadcast();
+  StreamSink<Events> get sinkEvent => event.sink;
+  Stream<Events> get streamEvent => event.stream;
 
   final allLabels = StreamController<Map<String, List<LabelModel>>>.broadcast();
   StreamSink<Map<String, List<LabelModel>>> get sinkAllLabels => allLabels.sink;
@@ -27,6 +32,10 @@ class CalendarBloc extends BlocBase {
   final selectedLabel = StreamController<int>.broadcast();
   StreamSink<int> get sinkSelectedLabel => selectedLabel.sink;
   Stream<int> get streamSelectedLabel => selectedLabel.stream;
+
+  final noteImageUrl = StreamController<String>.broadcast();
+  StreamSink<String> get sinkNoteImageUrl => noteImageUrl.sink;
+  Stream<String> get streamNoteImageUrl => noteImageUrl.stream;
 
   @override
   void dispose() {}
@@ -69,7 +78,7 @@ class CalendarBloc extends BlocBase {
     if (response.statusCode == 200) {
       Map<String, dynamic> body = jsonDecode(response.body);
       labels = EventModel.fromJson(body['data']);
-      
+      sinkEvents.add(labels);
     } else {
       toastService.showErrorToast(
           context: context,
@@ -79,8 +88,15 @@ class CalendarBloc extends BlocBase {
     return labels;
   }
 
-  void updateNote(BuildContext context, int noteId, String description,
-      int money, int labelID, String date, bool isIncome, DateTime day) async {
+  void updateNote(
+      BuildContext context,
+      int noteId,
+      String description,
+      int money,
+      int labelID,
+      String date,
+      bool isIncome,
+      List<EventImages> images) async {
     Map<String, dynamic> body = {
       "id": noteId,
       "isIncome": isIncome,
@@ -88,7 +104,7 @@ class CalendarBloc extends BlocBase {
       "money": money,
       "description": description,
       "dateUse": date,
-      "images": []
+      "images": images
     };
     final statusCode = await apiServices.createOrUpdateSpendingNote(body);
     if (statusCode == 200) {
@@ -120,6 +136,16 @@ class CalendarBloc extends BlocBase {
           context: context,
           title: "Thông báo",
           message: "Xóa thông tin thất bại: ($statusCode)");
+    }
+  }
+
+  Future<String> uploadNoteImage(BuildContext context, File file) async {
+    final response = await apiServices.uploadNoteImage(file);
+    if (response.statusCode == 200) {
+      Map<String, dynamic> body = jsonDecode(response.body);
+      return body['data'];
+    } else {
+      return "";
     }
   }
 }

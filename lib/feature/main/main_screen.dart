@@ -8,18 +8,9 @@ import 'package:quan_ly_chi_tieu/feature/setting/setting_bloc.dart';
 import 'package:quan_ly_chi_tieu/feature/setting/setting_screen.dart';
 import 'package:quan_ly_chi_tieu/feature/statistics/statistics_bloc.dart';
 import 'package:quan_ly_chi_tieu/feature/statistics/statistics_screen.dart';
-import 'package:quan_ly_chi_tieu/product/extension/context_extension.dart';
-import 'package:quan_ly_chi_tieu/product/utils/datetime_utils.dart';
-import 'package:toggle_switch/toggle_switch.dart';
 
-import '../../main.dart';
 import '../../product/base/bloc/base_bloc.dart';
-import '../../product/constants/enums/app_theme_enums.dart';
 import '../../product/constants/icon/icon_constants.dart';
-import '../../product/lang/language_constants.dart';
-import '../../product/services/api_services.dart';
-import '../../product/services/language_services.dart';
-import '../../product/services/theme_services.dart';
 import 'main_bloc.dart';
 
 class MainScreen extends StatefulWidget {
@@ -32,7 +23,7 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   late MainBloc mainBloc;
   PersistentTabController persistentTabController =
-      PersistentTabController(initialIndex: 0);
+      PersistentTabController(initialIndex: 1);
   @override
   void initState() {
     super.initState();

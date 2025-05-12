@@ -1,23 +1,23 @@
-class BaseEventModel {
-  int? totalIncome;
-  int? totalOutcome;
-  BaseEventModel({this.totalIncome, this.totalOutcome});
-  BaseEventModel.fromJson(Map<String, dynamic> json) {
-    totalIncome = json['totalInCome'];
-    totalOutcome = json['totlaOutCome'];
-  }
-}
+// class BaseEventModel {
+//   int? totalIncome;
+//   int? totalOutcome;
+//   BaseEventModel({this.totalIncome, this.totalOutcome});
+//   BaseEventModel.fromJson(Map<String, dynamic> json) {
+//     totalIncome = json['totalInCome'];
+//     totalOutcome = json['totlaOutCome'];
+//   }
+// }
 
-class Event extends BaseEventModel {
-  int? id;
-  int? name;
-  Event({this.id, this.name, super.totalIncome, super.totalOutcome});
+// class Event extends BaseEventModel {
+//   int? id;
+//   int? name;
+//   Event({this.id, this.name, super.totalIncome, super.totalOutcome});
 
-  Event.fromJson(Map<String, dynamic> json) : super.fromJson(json) {
-    id = json['id'];
-    name = json['name'];
-  }
-}
+//   Event.fromJson(Map<String, dynamic> json) : super.fromJson(json) {
+//     id = json['id'];
+//     name = json['name'];
+//   }
+// }
 
 class EventModel {
   int? totalIncome;
