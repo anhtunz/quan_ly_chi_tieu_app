@@ -49,9 +49,43 @@ eventChanged(BuildContext context, Events event, CalendarBloc calendarBloc,
                 children: [
                   MaterialButton(
                     onPressed: () {
-                      calendarBloc.deleteNote(context, event.id!);
-                      Navigator.pop(modalBottomSheetContext);
-                      calendarBloc.sinkEvents.add(null);
+                      showDialog(
+                        context: modalBottomSheetContext,
+                        builder: ((dialogContext) {
+                          return AlertDialog(
+                            title: Text("Xác nhận xóa ghi chú"),
+                            content:
+                                Text("Bạn chắc chắn muốn xóa ghi chú không?"),
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.pop(dialogContext);
+                                },
+                                child: Text(
+                                  "Hủy",
+                                ),
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.pop(dialogContext);
+                                  calendarBloc.deleteNote(context, event.id!);
+                                  Navigator.pop(modalBottomSheetContext);
+                                  calendarBloc.sinkEvents.add(null);
+                                },
+                                child: Text(
+                                  "Xóa",
+                                  style: TextStyle(
+                                    color: Colors.redAccent,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          );
+                        }),
+                      );
+                      // calendarBloc.deleteNote(context, event.id!);
+                      // Navigator.pop(modalBottomSheetContext);
+                      // calendarBloc.sinkEvents.add(null);
                     },
                     color: Colors.red,
                     shape: RoundedRectangleBorder(
@@ -215,7 +249,7 @@ eventChanged(BuildContext context, Events event, CalendarBloc calendarBloc,
                                           event.images = [];
                                           calendarBloc.sinkEvent.add(event);
                                         }
-                                        log("Result: $event");
+                                        log("Result: $result");
                                       },
                                       icon: Icon(Icons.image_outlined),
                                     ),

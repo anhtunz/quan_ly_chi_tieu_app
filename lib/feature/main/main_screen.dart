@@ -98,7 +98,7 @@ class _MainScreenState extends State<MainScreen> {
         items: _navBarsItems(),
         handleAndroidBackButtonPress: true,
         resizeToAvoidBottomInset: true,
-        stateManagement: true,
+        stateManagement: false,
         animationSettings: const NavBarAnimationSettings(
           navBarItemAnimation: ItemAnimationSettings(
             duration: Duration(milliseconds: 200),

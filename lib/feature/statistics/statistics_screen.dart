@@ -13,7 +13,6 @@ import '../../product/extension/context_extension.dart';
 import '../../product/utils/datetime_utils.dart';
 import '../calendar/model/event_model.dart';
 
-
 class StatisticsScreen extends StatefulWidget {
   const StatisticsScreen({super.key});
 
@@ -487,7 +486,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                                               );
                                             } else {
                                               return SizedBox(
-                                                height: 300,
+                                                height: 250,
                                                 child: isMonthSnaphot.data! ==
                                                         true
                                                     ? PieChartComponent(
@@ -503,14 +502,32 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                                             }
                                           },
                                         ),
+                                        SizedBox(
+                                          height: context.lowValue,
+                                        ),
                                         Divider(),
                                         if (isMonthSnaphot.data == true)
-                                          ...listData(
-                                              eventsSnapshot.data ?? {}),
+                                          SizedBox(
+                                            height: context.dynamicHeight(0.15),
+                                            child: SingleChildScrollView(
+                                              child: Column(
+                                                children: listData(
+                                                    eventsSnapshot.data ?? {}),
+                                              ),
+                                            ),
+                                          ),
                                         if (isMonthSnaphot.data == false)
-                                          ...monthsDataInYear(yearEventSnapshot
-                                                  .data!.monthData ??
-                                              [])
+                                          SizedBox(
+                                            height: context.dynamicHeight(0.2),
+                                            child: SingleChildScrollView(
+                                              child: Column(
+                                                children: monthsDataInYear(
+                                                    yearEventSnapshot
+                                                            .data!.monthData ??
+                                                        []),
+                                              ),
+                                            ),
+                                          ),
                                       ],
                                     ),
                                   ),

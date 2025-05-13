@@ -13,7 +13,39 @@ Future<bool> eventImage(BuildContext context, String url) async {
               actions: [
                 IconButton(
                   onPressed: () {
-                    Navigator.pop(bottomSheetContext, true); // Trả về true
+                    showDialog(
+                      context: bottomSheetContext,
+                      builder: ((dialogContext) {
+                        return AlertDialog(
+                          title: Text("Xóa ảnh"),
+                          content:
+                              Text("Bạn chắc chắn muốn ảnh của ghi chú này?"),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.pop(dialogContext);
+                              },
+                              child: Text(
+                                "Hủy",
+                              ),
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                Navigator.pop(dialogContext);
+                                Navigator.pop(bottomSheetContext, true);
+                              },
+                              child: Text(
+                                "Xác nhận",
+                                style: TextStyle(
+                                  color: Colors.redAccent,
+                                ),
+                              ),
+                            ),
+                          ],
+                        );
+                      }),
+                    );
+                    // Trả về true
                   },
                   icon: Icon(Icons.delete),
                 ),
@@ -27,7 +59,7 @@ Future<bool> eventImage(BuildContext context, String url) async {
           );
         },
       ) ??
-      false; 
+      false;
 
   return isDeleteImage;
 }
