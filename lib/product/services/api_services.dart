@@ -40,9 +40,9 @@ class APIServices {
   }
 
   Future<http.Response> register(Map<String, dynamic> registerRequest) async {
-    final respone = await NetworkManager.instance!
+    final response = await NetworkManager.instance!
         .createDataInServer(ApiPathConstants.REGISTER_PATH, registerRequest);
-    return respone;
+    return response;
   }
 
   Future<http.Response> login(Map<String, dynamic> loginRequest) async {

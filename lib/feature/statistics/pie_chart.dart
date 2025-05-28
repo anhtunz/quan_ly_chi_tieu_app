@@ -37,6 +37,7 @@ class _PieChartComponentState extends State<PieChartComponent> {
     return sections;
   }
 
+
   void _showTooltip(BuildContext context, int touchedIndex, Offset position) {
     if (touchedIndex < 0 || touchedIndex >= widget.events.length) {
       return;

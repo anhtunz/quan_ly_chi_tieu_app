@@ -95,11 +95,6 @@ class _SettingScreenState extends State<SettingScreen> {
                     ),
                     SizedBox(height: context.lowValue),
                     cardContent(
-                      Icons.bar_chart_rounded,
-                      "Thống kê",
-                    ),
-                    SizedBox(height: context.lowValue),
-                    cardContent(
                       Icons.logout_outlined,
                       "Đăng xuất",
                     ),

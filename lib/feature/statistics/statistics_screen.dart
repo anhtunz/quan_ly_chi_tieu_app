@@ -132,6 +132,14 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
     }).toList();
   }
 
+  int sumData(List<Events> events) {
+    int total = 0;
+    for (var event in events) {
+      total += event.money!;
+    }
+    return total;
+  }
+
   List<Widget> listData(Map<String, List<Events>> events) {
     List<Widget> lala = [];
     events.forEach((keyData, value) {
@@ -155,7 +163,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                   style: TextStyle(fontWeight: FontWeight.w500),
                 ),
                 Text(
-                  "${MoneyUntils.instance.formatMoney(value.first.money!.toInt())}₫",
+                  "${MoneyUntils.instance.formatMoney(sumData(value))}₫",
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     color: value.first.isIncome! ? Colors.blue : Colors.black,

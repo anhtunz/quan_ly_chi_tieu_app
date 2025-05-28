@@ -112,316 +112,319 @@ class _HomeScreenState extends State<HomeScreen> {
               return Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: SafeArea(
-                  child: Column(
-                    children: [
-                      Row(
-                        // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          Text("Ngày"),
-                          SizedBox(width: context.lowValue),
-                          SizedBox(
-                            width: context.dynamicWidth(0.8),
-                            child: TextField(
-                              controller: datePickerController,
-                              readOnly: true,
-                              textAlign: TextAlign.center,
-                              textAlignVertical: TextAlignVertical.center,
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 18),
-                              decoration: InputDecoration(
-                                border: InputBorder.none,
-                                prefixIcon: IconButton(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        Row(
+                          // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            Text("Ngày"),
+                            SizedBox(width: context.lowValue),
+                            SizedBox(
+                              width: context.dynamicWidth(0.8),
+                              child: TextField(
+                                controller: datePickerController,
+                                readOnly: true,
+                                textAlign: TextAlign.center,
+                                textAlignVertical: TextAlignVertical.center,
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 18),
+                                decoration: InputDecoration(
+                                  border: InputBorder.none,
+                                  prefixIcon: IconButton(
+                                      onPressed: () {
+                                        handleClickButton(true);
+                                      },
+                                      icon: Icon(Icons.chevron_left)),
+                                  suffixIcon: IconButton(
                                     onPressed: () {
-                                      handleClickButton(true);
+                                      handleClickButton(false);
                                     },
-                                    icon: Icon(Icons.chevron_left)),
-                                suffixIcon: IconButton(
-                                  onPressed: () {
-                                    handleClickButton(false);
-                                  },
-                                  icon: Icon(Icons.chevron_right),
+                                    icon: Icon(Icons.chevron_right),
+                                  ),
                                 ),
                               ),
-                            ),
-                          )
-                        ],
-                      ),
-                      Divider(),
-                      Row(
-                        children: [
-                          Text("Ghi chú"),
-                          SizedBox(width: context.lowValue),
-                          SizedBox(
-                            width: context.dynamicWidth(0.8),
-                            child: SizedBox(
-                              width: context.dynamicWidth(0.5),
+                            )
+                          ],
+                        ),
+                        Divider(),
+                        Row(
+                          children: [
+                            Text("Ghi chú"),
+                            SizedBox(width: context.lowValue),
+                            SizedBox(
+                              width: context.dynamicWidth(0.8),
+                              child: SizedBox(
+                                width: context.dynamicWidth(0.5),
+                                child: TextField(
+                                  controller: noteController,
+                                  textAlign: TextAlign.center,
+                                  textAlignVertical: TextAlignVertical.center,
+                                  decoration: InputDecoration(
+                                      border: InputBorder.none,
+                                      hintText: "Nhập ghi chú"),
+                                ),
+                              ),
+                            )
+                          ],
+                        ),
+                        Divider(),
+                        Row(
+                          // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            Text(isMoneySpendSnapshot.data == true
+                                ? "Tiền chi"
+                                : "Tiền thu"),
+                            SizedBox(width: context.lowValue),
+                            SizedBox(
+                              width: context.dynamicWidth(0.8),
                               child: TextField(
-                                controller: noteController,
+                                inputFormatters: [
+                                  NumberFormatter(),
+                                ],
+                                keyboardType: TextInputType.number,
+                                controller: moneyController,
                                 textAlign: TextAlign.center,
                                 textAlignVertical: TextAlignVertical.center,
                                 decoration: InputDecoration(
+                                    suffixIcon: IconButton(
+                                      onPressed: () {
+                                        pickImage();
+                                      },
+                                      icon: Icon(Icons.upload_sharp),
+                                    ),
                                     border: InputBorder.none,
-                                    hintText: "Nhập ghi chú"),
+                                    suffix: Text("₫"),
+                                    hintText: "0"),
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 18),
                               ),
-                            ),
-                          )
-                        ],
-                      ),
-                      Divider(),
-                      Row(
-                        // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          Text(isMoneySpendSnapshot.data == true
-                              ? "Tiền chi"
-                              : "Tiền thu"),
-                          SizedBox(width: context.lowValue),
-                          SizedBox(
-                            width: context.dynamicWidth(0.8),
-                            child: TextField(
-                              inputFormatters: [
-                                NumberFormatter(),
-                              ],
-                              keyboardType: TextInputType.number,
-                              controller: moneyController,
-                              textAlign: TextAlign.center,
-                              textAlignVertical: TextAlignVertical.center,
-                              decoration: InputDecoration(
-                                  suffixIcon: IconButton(
-                                    onPressed: () {
-                                      pickImage();
-                                    },
-                                    icon: Icon(Icons.upload_sharp),
-                                  ),
-                                  border: InputBorder.none,
-                                  suffix: Text("₫"),
-                                  hintText: "0"),
+                            )
+                          ],
+                        ),
+                        if (imageUrlSnapshot.data != "")
+                          TextButton(
+                            onPressed: () {
+                              showModalBottomSheet(
+                                context: context,
+                                useSafeArea: true,
+                                builder: (bottonSheetContext) {
+                                  return Scaffold(
+                                    appBar: AppBar(
+                                      leading: null,
+                                      actions: [
+                                        IconButton(
+                                          onPressed: () {
+                                            Navigator.pop(bottonSheetContext);
+                                          },
+                                          icon: Icon(Icons.close),
+                                        ),
+                                      ],
+                                    ),
+                                    body: Image.file(
+                                      selectedFile!,
+                                      height: bottonSheetContext.height,
+                                      width: bottonSheetContext.width,
+                                    ),
+                                  );
+                                },
+                              );
+                            },
+                            child: Text("Xem ảnh"),
+                          ),
+                        Divider(),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              "Danh mục",
                               style: TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 18),
+                                  fontSize: 20, fontWeight: FontWeight.bold),
                             ),
-                          )
-                        ],
-                      ),
-                      if (imageUrlSnapshot.data != "")
-                        TextButton(
-                          onPressed: () {
-                            showModalBottomSheet(
-                              context: context,
-                              useSafeArea: true,
-                              builder: (bottonSheetContext) {
-                                return Scaffold(
-                                  appBar: AppBar(
-                                    leading: null,
-                                    actions: [
-                                      IconButton(
-                                        onPressed: () {
-                                          Navigator.pop(bottonSheetContext);
+                            IconButton(
+                                onPressed: () {
+                                  homeBloc.getAllLabel(context);
+                                },
+                                icon: Icon(Icons.refresh))
+                          ],
+                        ),
+                        SizedBox(
+                          height: 15,
+                        ),
+                        StreamBuilder<Map<String, List<LabelModel>>?>(
+                          stream: homeBloc.streamAllLabels,
+                          builder: (context, allLabelsSnapshot) {
+                            if (allLabelsSnapshot.data == null) {
+                              homeBloc.getAllLabel(context);
+                              return Center(
+                                child: CircularProgressIndicator(),
+                              );
+                            } else {
+                              return SizedBox(
+                                height: context.dynamicHeight(0.4),
+                                child: SingleChildScrollView(
+                                  child: Wrap(
+                                    spacing: 10,
+                                    runSpacing: 10,
+                                    children: [
+                                      ...(isMoneySpendSnapshot.data == true)
+                                          ? allLabelsSnapshot.data!['expense']!
+                                              .map((label) {
+                                              return GestureDetector(
+                                                onTap: () {
+                                                  setState(() {
+                                                    selectedLabel =
+                                                        label; // Cập nhật appIcon được chọn
+                                                  });
+                                                },
+                                                child: appIcon(
+                                                  label.name!,
+                                                  label.iconName!,
+                                                  label.color!,
+                                                  isSelected: selectedLabel ==
+                                                      label, // Kiểm tra xem có được chọn không
+                                                ),
+                                              );
+                                            }).toList()
+                                          : allLabelsSnapshot.data!['income']!
+                                              .map((label) {
+                                              return GestureDetector(
+                                                onTap: () {
+                                                  setState(() {
+                                                    selectedLabel =
+                                                        label; // Cập nhật appIcon được chọn
+                                                  });
+                                                },
+                                                child: appIcon(
+                                                  label.name!,
+                                                  label.iconName!,
+                                                  label.color!,
+                                                  isSelected:
+                                                      selectedLabel == label,
+                                                ),
+                                              );
+                                            }).toList(),
+                                      // Thêm nút chỉnh sửa vào cuối danh sách
+                                      GestureDetector(
+                                        onTap: () {
+                                          context.pushNamed(
+                                            AppRoutes.LABEL_MANAGER.name,
+                                            extra: isMoneySpent ? 0 : 1,
+                                          );
+
+                                          Future.delayed(
+                                            const Duration(seconds: 1),
+                                            () => homeBloc.sinkAllLabels
+                                                .add(null),
+                                          );
                                         },
-                                        icon: Icon(Icons.close),
-                                      ),
+                                        child: Container(
+                                          width: context.dynamicWidth(0.3),
+                                          height: 100,
+                                          decoration: BoxDecoration(
+                                              border: Border.all(
+                                                  color: Colors.blueAccent),
+                                              borderRadius:
+                                                  BorderRadius.circular(10)),
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceEvenly,
+                                                children: [
+                                                  Text(
+                                                    "Chỉnh sửa",
+                                                    style: context
+                                                        .responsiveBodySmallWithBold,
+                                                  ),
+                                                  Icon(
+                                                    Icons.arrow_forward_ios,
+                                                    size: 15,
+                                                  )
+                                                ],
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                      )
                                     ],
                                   ),
-                                  body: Image.file(
-                                    selectedFile!,
-                                    height: bottonSheetContext.height,
-                                    width: bottonSheetContext.width,
-                                  ),
-                                );
-                              },
-                            );
-                          },
-                          child: Text("Xem ảnh"),
-                        ),
-                      Divider(),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            "Danh mục",
-                            style: TextStyle(
-                                fontSize: 20, fontWeight: FontWeight.bold),
-                          ),
-                          IconButton(
-                              onPressed: () {
-                                homeBloc.getAllLabel(context);
-                              },
-                              icon: Icon(Icons.refresh))
-                        ],
-                      ),
-                      SizedBox(
-                        height: 15,
-                      ),
-                      StreamBuilder<Map<String, List<LabelModel>>?>(
-                        stream: homeBloc.streamAllLabels,
-                        builder: (context, allLabelsSnapshot) {
-                          if (allLabelsSnapshot.data == null) {
-                            homeBloc.getAllLabel(context);
-                            return Center(
-                              child: CircularProgressIndicator(),
-                            );
-                          } else {
-                            return SizedBox(
-                              height: context.dynamicHeight(0.35),
-                              child: SingleChildScrollView(
-                                child: Wrap(
-                                  spacing: 10,
-                                  runSpacing: 10,
-                                  children: [
-                                    ...(isMoneySpendSnapshot.data == true)
-                                        ? allLabelsSnapshot.data!['expense']!
-                                            .map((label) {
-                                            return GestureDetector(
-                                              onTap: () {
-                                                setState(() {
-                                                  selectedLabel =
-                                                      label; // Cập nhật appIcon được chọn
-                                                });
-                                              },
-                                              child: appIcon(
-                                                label.name!,
-                                                label.iconName!,
-                                                label.color!,
-                                                isSelected: selectedLabel ==
-                                                    label, // Kiểm tra xem có được chọn không
-                                              ),
-                                            );
-                                          }).toList()
-                                        : allLabelsSnapshot.data!['income']!
-                                            .map((label) {
-                                            return GestureDetector(
-                                              onTap: () {
-                                                setState(() {
-                                                  selectedLabel =
-                                                      label; // Cập nhật appIcon được chọn
-                                                });
-                                              },
-                                              child: appIcon(
-                                                label.name!,
-                                                label.iconName!,
-                                                label.color!,
-                                                isSelected:
-                                                    selectedLabel == label,
-                                              ),
-                                            );
-                                          }).toList(),
-                                    // Thêm nút chỉnh sửa vào cuối danh sách
-                                    GestureDetector(
-                                      onTap: () {
-                                        context.pushNamed(
-                                          AppRoutes.LABEL_MANAGER.name,
-                                          extra: isMoneySpent ? 0 : 1,
-                                        );
-
-                                        Future.delayed(
-                                          const Duration(seconds: 1),
-                                          () =>
-                                              homeBloc.sinkAllLabels.add(null),
-                                        );
-                                      },
-                                      child: Container(
-                                        width: context.dynamicWidth(0.3),
-                                        height: 100,
-                                        decoration: BoxDecoration(
-                                            border: Border.all(
-                                                color: Colors.blueAccent),
-                                            borderRadius:
-                                                BorderRadius.circular(10)),
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.spaceEvenly,
-                                              children: [
-                                                Text(
-                                                  "Chỉnh sửa",
-                                                  style: context
-                                                      .responsiveBodySmallWithBold,
-                                                ),
-                                                Icon(
-                                                  Icons.arrow_forward_ios,
-                                                  size: 15,
-                                                )
-                                              ],
-                                            )
-                                          ],
-                                        ),
-                                      ),
-                                    )
-                                  ],
                                 ),
-                              ),
-                            );
-                          }
-                        },
-                      ),
-                      SizedBox(
-                        height: 15,
-                      ),
-                      MaterialButton(
-                        onPressed: () {
-                          String date =
-                              convertToIso8601(datePickerController.text);
-                          String note = noteController.text;
-                          String money = moneyController.text.replaceAll(
-                              RegExp(r'[,.]'),
-                              ''); // Loại bỏ dấu phẩy và dấu chấm
-                          log("IsmoneySoent: $isMoneySpent");
-                          log("LableId: ${selectedLabel?.name ?? "Chưa có"}");
-                          log("ImageUrl: ${imageUrlSnapshot.data}");
-                          if (date == "" ||
-                              note == "" ||
-                              money == "" ||
-                              selectedLabel == null) {
-                            toastService.showWarningToast(
-                              context: context,
-                              title: "Thông báo",
-                              message: "Hãy nhập đủ các trường",
-                            );
-                          } else {
-                            // Kiểm tra xem money có phải là số hợp lệ
-                            int? parsedMoney = int.tryParse(money);
-                            if (parsedMoney == null) {
+                              );
+                            }
+                          },
+                        ),
+                        SizedBox(
+                          height: context.mediumValue,
+                        ),
+                        MaterialButton(
+                          onPressed: () {
+                            String date =
+                                convertToIso8601(datePickerController.text);
+                            String note = noteController.text;
+                            String money = moneyController.text.replaceAll(
+                                RegExp(r'[,.]'),
+                                ''); // Loại bỏ dấu phẩy và dấu chấm
+                            log("IsmoneySoent: $isMoneySpent");
+                            log("LableId: ${selectedLabel?.name ?? "Chưa có"}");
+                            log("ImageUrl: ${imageUrlSnapshot.data}");
+                            if (date == "" ||
+                                note == "" ||
+                                money == "" ||
+                                selectedLabel == null) {
                               toastService.showWarningToast(
                                 context: context,
                                 title: "Thông báo",
-                                message: "Số tiền không hợp lệ",
+                                message: "Hãy nhập đủ các trường",
                               );
                             } else {
-                              homeBloc.createNewNote(
-                                context,
-                                note,
-                                parsedMoney, // Sử dụng số đã parse
-                                selectedLabel!.id!,
-                                date,
-                                imageUrlSnapshot.data!,
-                                !isMoneySpent,
-                              );
-                              noteController.clear();
-                              moneyController.clear();
-                              homeBloc.sinkNoteImageUrl.add("");
+                              // Kiểm tra xem money có phải là số hợp lệ
+                              int? parsedMoney = int.tryParse(money);
+                              if (parsedMoney == null) {
+                                toastService.showWarningToast(
+                                  context: context,
+                                  title: "Thông báo",
+                                  message: "Số tiền không hợp lệ",
+                                );
+                              } else {
+                                homeBloc.createNewNote(
+                                  context,
+                                  note,
+                                  parsedMoney, // Sử dụng số đã parse
+                                  selectedLabel!.id!,
+                                  date,
+                                  imageUrlSnapshot.data!,
+                                  !isMoneySpent,
+                                );
+                                noteController.clear();
+                                moneyController.clear();
+                                homeBloc.sinkNoteImageUrl.add("");
+                              }
                             }
-                          }
-                        },
-                        minWidth: double.infinity,
-                        height: 50,
-                        color: context.theme.colorScheme.primaryContainer,
-                        elevation: 0,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(50),
+                          },
+                          minWidth: double.infinity,
+                          height: 50,
+                          color: context.theme.colorScheme.primaryContainer,
+                          elevation: 0,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(50),
+                          ),
+                          child: Text(
+                            isMoneySpendSnapshot.data == true
+                                ? "Thêm khoản chi"
+                                : "Thêm khoản thu",
+                            style: TextStyle(
+                                fontWeight: FontWeight.w600, fontSize: 18),
+                          ),
                         ),
-                        child: Text(
-                          isMoneySpendSnapshot.data == true
-                              ? "Thêm khoản chi"
-                              : "Thêm khoản thu",
-                          style: TextStyle(
-                              fontWeight: FontWeight.w600, fontSize: 18),
-                        ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               );
@@ -527,11 +530,12 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   String? extractAmountFromText(String text) {
-    final regex = RegExp(r'(\d{1,3}(?:,\d{3})*)\s*VND');
+    // Regex to match amounts with either "VND" or "đ", allowing for optional "+" or "−" signs
+    final regex = RegExp(r'[−+]?\s*(\d{1,3}(?:[,.]\d{3})*)\s*(?:VND|đ)');
     final match = regex.firstMatch(text);
 
     if (match != null) {
-      String amountStr = match.group(1)!.replaceAll(',', '');
+      String amountStr = match.group(1)!.replaceAll(RegExp(r'[,.]'), '');
       return amountStr;
     }
 
@@ -606,6 +610,7 @@ String formatMoney(String money) {
 
   return result;
 }
+
 Future<String> extractFile(File file) async {
   final textRecornized = TextRecognizer(script: TextRecognitionScript.latin);
   final InputImage inputImage = InputImage.fromFile(file);

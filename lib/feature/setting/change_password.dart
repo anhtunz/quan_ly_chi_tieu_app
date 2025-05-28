@@ -81,7 +81,7 @@ changePassword(BuildContext context, SettingBloc settingBloc) async {
                                   return null;
                                 },
                                 decoration: InputDecoration(
-                                  hintText: "Nhập mật khẩu mới",
+                                  hintText: "Nhập mật khẩu cũ",
                                   border: const OutlineInputBorder(
                                     borderRadius: BorderRadius.only(
                                         topLeft: Radius.circular(12),

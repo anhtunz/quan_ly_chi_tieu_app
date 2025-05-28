@@ -108,9 +108,11 @@ class CalendarBloc extends BlocBase {
       "money": money,
       "description": description,
       "dateUse": date,
-      "images":images.isNotEmpty ? [
-         {"id": images[0].id, "url": images[0].imageUrl} 
-      ] : []
+      "images": images.isNotEmpty
+          ? [
+              {"id": images[0].id, "url": images[0].imageUrl}
+            ]
+          : []
     };
     final statusCode = await apiServices.createOrUpdateSpendingNote(body);
     if (statusCode == 200) {

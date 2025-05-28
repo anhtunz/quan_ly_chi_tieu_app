@@ -23,7 +23,7 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   late MainBloc mainBloc;
   PersistentTabController persistentTabController =
-      PersistentTabController(initialIndex: 1);
+      PersistentTabController(initialIndex: 0);
   @override
   void initState() {
     super.initState();

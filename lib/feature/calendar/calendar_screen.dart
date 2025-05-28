@@ -195,9 +195,9 @@ class _CalendarScreenState extends State<CalendarScreen> {
     int money = 0;
     for (var event in events) {
       if (event.isIncome!) {
-        money -= event.money!;
-      } else {
         money += event.money!;
+      } else {
+        money -= event.money!;
       }
     }
     return formatMoney(money);
@@ -282,18 +282,17 @@ class _CalendarScreenState extends State<CalendarScreen> {
                                       left: 5.0,
                                       child: Text(
                                         '${date.day}',
-                                        style: TextStyle(fontSize: 16),
+                                        style: TextStyle(fontSize: 12),
                                       ),
                                     ),
                                   ],
                                 ),
                               );
                             },
-                            todayBuilder: (context, date, _) {
+                            outsideBuilder: (context, date, _) {
                               return Container(
                                 margin: const EdgeInsets.all(4.0),
                                 decoration: BoxDecoration(
-                                  color: Colors.grey[300],
                                   shape: BoxShape.rectangle,
                                   borderRadius: BorderRadius.circular(5),
                                 ),
@@ -304,7 +303,30 @@ class _CalendarScreenState extends State<CalendarScreen> {
                                       child: Text(
                                         '${date.day}',
                                         style: TextStyle(
-                                            fontSize: 16, color: Colors.white),
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.w200),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
+                            todayBuilder: (context, date, _) {
+                              return Container(
+                                margin: const EdgeInsets.all(4.0),
+                                decoration: BoxDecoration(
+                                  color: Colors.green[200],
+                                  shape: BoxShape.rectangle,
+                                  borderRadius: BorderRadius.circular(5),
+                                ),
+                                child: Stack(
+                                  children: [
+                                    Positioned(
+                                      left: 5.0,
+                                      child: Text(
+                                        '${date.day}',
+                                        style: TextStyle(
+                                            fontSize: 12, color: Colors.white),
                                       ),
                                     ),
                                   ],
@@ -326,7 +348,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                                       child: Text(
                                         '${date.day}',
                                         style: TextStyle(
-                                            fontSize: 16, color: Colors.white),
+                                            fontSize: 12, color: Colors.white),
                                       ),
                                     ),
                                   ],
@@ -362,6 +384,9 @@ class _CalendarScreenState extends State<CalendarScreen> {
                                               fontSize: 12,
                                               color: Colors.redAccent),
                                         ),
+                                        const SizedBox(
+                                          height: 5,
+                                        )
                                       ],
                                     ),
                                   ),
@@ -443,7 +468,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                         Container(
                           padding: const EdgeInsets.symmetric(
                               horizontal: 16.0, vertical: 8.0),
-                          color: Colors.grey[200],
+                          color: Colors.green[200],
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
@@ -509,7 +534,9 @@ class _CalendarScreenState extends State<CalendarScreen> {
                                         CrossAxisAlignment.start,
                                     children: [
                                       Container(
-                                        color: Colors.grey[300],
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .primaryFixed,
                                         padding: const EdgeInsets.symmetric(
                                             horizontal: 16.0, vertical: 8.0),
                                         child: Row(
